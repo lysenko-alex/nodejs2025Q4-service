@@ -21,6 +21,7 @@ async function bootstrap() {
     .setVersion('1.0.0')
     .addTag('users', 'User management endpoints')
     .addTag('artists', 'Artist management endpoints')
+    .addTag('albums', 'Album management endpoints')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
