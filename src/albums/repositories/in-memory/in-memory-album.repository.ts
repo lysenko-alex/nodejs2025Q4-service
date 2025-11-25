@@ -40,7 +40,10 @@ export class InMemoryAlbumRepository implements IAlbumRepository {
     const updatedAlbum: Album = {
       ...album,
       ...updateAlbumDto,
-      artistId: updateAlbumDto.artistId !== undefined ? updateAlbumDto.artistId : album.artistId,
+      artistId:
+        updateAlbumDto.artistId !== undefined
+          ? updateAlbumDto.artistId
+          : album.artistId,
     };
 
     this.albums[albumIndex] = updatedAlbum;
@@ -63,4 +66,3 @@ export class InMemoryAlbumRepository implements IAlbumRepository {
     });
   }
 }
-

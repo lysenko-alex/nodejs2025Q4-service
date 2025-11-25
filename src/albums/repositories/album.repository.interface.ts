@@ -10,4 +10,3 @@ export interface IAlbumRepository {
   delete(id: string): Promise<void>;
   nullifyArtistReferences(artistId: string): Promise<void>;
 }
-

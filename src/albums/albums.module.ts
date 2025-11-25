@@ -1,10 +1,12 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { AlbumsController } from './albums.controller';
 import { AlbumsService } from './albums.service';
 import { InMemoryAlbumRepository } from './repositories/in-memory/in-memory-album.repository';
+import { TracksModule } from '../tracks/tracks.module';
 
 @Module({
   controllers: [AlbumsController],
+  imports: [forwardRef(() => TracksModule)],
   providers: [
     AlbumsService,
     {

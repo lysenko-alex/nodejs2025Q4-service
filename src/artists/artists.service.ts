@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { validate } from 'uuid';
 import { IArtistRepository } from './repositories/artist.repository.interface';
 import { Artist } from './entities/artist.entity';
@@ -11,12 +11,18 @@ import {
   DomainException,
   convertDomainExceptionToHttp,
 } from '../common/errors';
+import { AlbumsService } from '../albums/albums.service';
+import { TracksService } from '../tracks/tracks.service';
 
 @Injectable()
 export class ArtistsService {
   constructor(
     @Inject('IArtistRepository')
     private readonly artistRepository: IArtistRepository,
+    @Inject(forwardRef(() => AlbumsService))
+    private readonly albumsService: AlbumsService,
+    @Inject(forwardRef(() => TracksService))
+    private readonly tracksService: TracksService,
   ) {}
 
   async findAll(): Promise<Artist[]> {
@@ -61,6 +67,10 @@ export class ArtistsService {
     }
 
     try {
+      // Nullify references in albums and tracks before deleting
+      await this.albumsService.nullifyArtistReferences(id);
+      await this.tracksService.nullifyArtistReferences(id);
+
       await this.artistRepository.delete(id);
     } catch (error) {
       if (error instanceof DomainException) {
