@@ -53,4 +53,3 @@ export class InMemoryArtistRepository implements IArtistRepository {
     this.artists.splice(artistIndex, 1);
   }
 }
-

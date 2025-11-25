@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { validate } from 'uuid';
+import { plainToInstance } from 'class-transformer';
 import { IUserRepository } from './repositories/user.repository.interface';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -20,7 +21,8 @@ export class UsersService {
   ) {}
 
   async findAll(): Promise<User[]> {
-    return this.userRepository.findAll();
+    const users = await this.userRepository.findAll();
+    return users.map((user) => plainToInstance(User, user));
   }
 
   async findOne(id: string): Promise<User> {
@@ -33,11 +35,12 @@ export class UsersService {
       throw new NotFoundException(ErrorCode.USER_NOT_FOUND);
     }
 
-    return user;
+    return plainToInstance(User, user);
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    return this.userRepository.create(createUserDto);
+    const user = await this.userRepository.create(createUserDto);
+    return plainToInstance(User, user);
   }
 
   async update(
@@ -49,7 +52,8 @@ export class UsersService {
     }
 
     try {
-      return await this.userRepository.update(id, updatePasswordDto);
+      const user = await this.userRepository.update(id, updatePasswordDto);
+      return plainToInstance(User, user);
     } catch (error) {
       if (error instanceof DomainException) {
         throw convertDomainExceptionToHttp(error);

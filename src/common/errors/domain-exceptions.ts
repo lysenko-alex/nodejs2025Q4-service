@@ -37,4 +37,3 @@ export class BusinessLogicException extends DomainException {
     this.name = 'BusinessLogicException';
   }
 }
-

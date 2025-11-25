@@ -28,4 +28,3 @@ export class Album {
   })
   artistId: string | null; // refers to Artist
 }
-

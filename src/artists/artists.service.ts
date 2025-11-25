@@ -13,6 +13,7 @@ import {
 } from '../common/errors';
 import { AlbumsService } from '../albums/albums.service';
 import { TracksService } from '../tracks/tracks.service';
+import { FavoritesService } from '../favorites/favorites.service';
 
 @Injectable()
 export class ArtistsService {
@@ -23,6 +24,8 @@ export class ArtistsService {
     private readonly albumsService: AlbumsService,
     @Inject(forwardRef(() => TracksService))
     private readonly tracksService: TracksService,
+    @Inject(forwardRef(() => FavoritesService))
+    private readonly favoritesService: FavoritesService,
   ) {}
 
   async findAll(): Promise<Artist[]> {
@@ -70,6 +73,8 @@ export class ArtistsService {
       // Nullify references in albums and tracks before deleting
       await this.albumsService.nullifyArtistReferences(id);
       await this.tracksService.nullifyArtistReferences(id);
+      // Remove from favorites
+      await this.favoritesService.removeArtistFromFavorites(id);
 
       await this.artistRepository.delete(id);
     } catch (error) {

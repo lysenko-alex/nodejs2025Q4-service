@@ -11,4 +11,3 @@ export interface ITrackRepository {
   nullifyArtistReferences(artistId: string): Promise<void>;
   nullifyAlbumReferences(albumId: string): Promise<void>;
 }
-

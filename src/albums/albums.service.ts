@@ -12,6 +12,7 @@ import {
   convertDomainExceptionToHttp,
 } from '../common/errors';
 import { TracksService } from '../tracks/tracks.service';
+import { FavoritesService } from '../favorites/favorites.service';
 
 @Injectable()
 export class AlbumsService {
@@ -20,6 +21,8 @@ export class AlbumsService {
     private readonly albumRepository: IAlbumRepository,
     @Inject(forwardRef(() => TracksService))
     private readonly tracksService: TracksService,
+    @Inject(forwardRef(() => FavoritesService))
+    private readonly favoritesService: FavoritesService,
   ) {}
 
   async findAll(): Promise<Album[]> {
@@ -66,6 +69,8 @@ export class AlbumsService {
     try {
       // Nullify references in tracks before deleting
       await this.tracksService.nullifyAlbumReferences(id);
+      // Remove from favorites
+      await this.favoritesService.removeAlbumFromFavorites(id);
 
       await this.albumRepository.delete(id);
     } catch (error) {

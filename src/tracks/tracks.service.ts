@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { validate } from 'uuid';
 import { ITrackRepository } from './repositories/track.repository.interface';
 import { Track } from './entities/track.entity';
@@ -11,12 +11,15 @@ import {
   DomainException,
   convertDomainExceptionToHttp,
 } from '../common/errors';
+import { FavoritesService } from '../favorites/favorites.service';
 
 @Injectable()
 export class TracksService {
   constructor(
     @Inject('ITrackRepository')
     private readonly trackRepository: ITrackRepository,
+    @Inject(forwardRef(() => FavoritesService))
+    private readonly favoritesService: FavoritesService,
   ) {}
 
   async findAll(): Promise<Track[]> {
@@ -61,6 +64,9 @@ export class TracksService {
     }
 
     try {
+      // Remove from favorites
+      await this.favoritesService.removeTrackFromFavorites(id);
+
       await this.trackRepository.delete(id);
     } catch (error) {
       if (error instanceof DomainException) {

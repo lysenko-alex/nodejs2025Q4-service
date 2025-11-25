@@ -37,4 +37,3 @@ export function convertDomainExceptionToHttp(
       return new NotFoundException(error.errorCode);
   }
 }
-

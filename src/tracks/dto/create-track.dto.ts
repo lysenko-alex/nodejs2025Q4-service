@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, IsInt, IsOptional, IsUUID } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsInt,
+  IsOptional,
+  IsUUID,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTrackDto {
@@ -41,4 +47,3 @@ export class CreateTrackDto {
   @IsOptional()
   albumId?: string | null;
 }
-

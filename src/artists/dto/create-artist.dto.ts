@@ -19,4 +19,3 @@ export class CreateArtistDto {
   @IsNotEmpty()
   grammy: boolean;
 }
-
