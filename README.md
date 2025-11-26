@@ -1,72 +1,227 @@
 # Home Library Service
 
+A RESTful API service for managing a home music library built with NestJS. This service allows you to manage users, artists, albums, tracks, and favorites.
+
+## Features
+
+- **User Management**: Create, read, update, and delete users with password management
+- **Music Library Management**: 
+  - Artists (with Grammy award status)
+  - Albums (linked to artists)
+  - Tracks (linked to artists and albums)
+- **Favorites System**: Add and remove artists, albums, and tracks to/from favorites
+- **API Documentation**: Interactive Swagger/OpenAPI documentation
+- **Comprehensive Testing**: End-to-end tests
+
 ## Prerequisites
 
-- Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+- **Node.js** >= 22.14.0 - [Download & Install Node.js](https://nodejs.org/en/download/)
+- **npm** or **pnpm** package manager
+- **Git** - [Download & Install Git](https://git-scm.com/downloads)
 
-## Downloading
+## Installation
 
-```
+1. Clone the repository:
+```bash
 git clone {repository URL}
+cd nodejs2025Q4-service
 ```
 
-## Installing NPM modules
-
-```
+2. Install dependencies:
+```bash
 npm install
+# or
+pnpm install
 ```
 
-## Running application
+## Configuration
+
+The application uses environment variables for configuration. Create a `.env` file in the root directory (optional, defaults are provided):
+
+```env
+PORT=4000
+BASE_URL=http://localhost:4000
+```
+
+### Environment Variables
+
+- `PORT` - Server port (default: 4000)
+- `BASE_URL` - Base URL for the API (default: http://localhost:4000)
+
+## Running the Application
+
+### Development Mode
+```bash
+npm run start:dev
+```
+
+### Production Mode
+```bash
+npm run build
+npm run start:prod
+```
+
+### Debug Mode
+```bash
+npm run start:debug
+```
+
+After starting the application, it will be available at `http://localhost:4000` (or your configured port).
+
+## API Documentation
+
+Once the application is running, you can access the interactive Swagger documentation at:
 
 ```
-npm start
+http://localhost:4000/docs
 ```
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+The API documentation includes:
+- All available endpoints
+- Request/response schemas
+- Example requests
+
+## API Endpoints
+
+### Users
+- `GET /user` - Get all users
+- `GET /user/:id` - Get user by ID
+- `POST /user` - Create a new user
+- `PUT /user/:id` - Update user password
+- `DELETE /user/:id` - Delete user
+
+### Artists
+- `GET /artist` - Get all artists
+- `GET /artist/:id` - Get artist by ID
+- `POST /artist` - Create a new artist
+- `PUT /artist/:id` - Update artist
+- `DELETE /artist/:id` - Delete artist
+
+### Albums
+- `GET /album` - Get all albums
+- `GET /album/:id` - Get album by ID
+- `POST /album` - Create a new album
+- `PUT /album/:id` - Update album
+- `DELETE /album/:id` - Delete album
+
+### Tracks
+- `GET /track` - Get all tracks
+- `GET /track/:id` - Get track by ID
+- `POST /track` - Create a new track
+- `PUT /track/:id` - Update track
+- `DELETE /track/:id` - Delete track
+
+### Favorites
+- `GET /favs` - Get all favorites (artists, albums, tracks)
+- `POST /favs/artist/:id` - Add artist to favorites
+- `DELETE /favs/artist/:id` - Remove artist from favorites
+- `POST /favs/album/:id` - Add album to favorites
+- `DELETE /favs/album/:id` - Remove album from favorites
+- `POST /favs/track/:id` - Add track to favorites
+- `DELETE /favs/track/:id` - Remove track from favorites
 
 ## Testing
 
-After application running open new terminal and enter:
+The project includes comprehensive end-to-end tests.
 
-To run all tests without authorization
-
-```
+### Run All Tests
+```bash
 npm run test
 ```
 
-To run only one of all test suites
-
-```
-npm run test -- <path to suite>
-```
-
-To run all test with authorization
-
-```
+### Run Tests with Authentication Mode
+```bash
 npm run test:auth
 ```
 
-To run only specific test suite with authorization
-
+### Run Refresh Token Tests
+```bash
+npm run test:refresh
 ```
-npm run test:auth -- <path to suite>
+
+### Run Specific Test Suite
+```bash
+npm run test -- <path-to-test-file>
+npm run test:auth -- <path-to-test-file>
 ```
 
-### Auto-fix and format
-
+### Run Tests in Watch Mode
+```bash
+npm run test:watch
 ```
+
+### Run Tests with Coverage
+```bash
+npm run test:cov
+```
+
+### Debug Tests
+```bash
+npm run test:debug
+```
+
+## Code Quality
+
+### Linting
+```bash
 npm run lint
 ```
 
-```
+### Formatting
+```bash
 npm run format
 ```
 
-### Debugging in VSCode
+## Project Structure
 
-Press <kbd>F5</kbd> to debug.
+```
+src/
+├── albums/          # Album module (controller, service, entities, DTOs, repositories)
+├── artists/         # Artist module (controller, service, entities, DTOs, repositories)
+├── tracks/          # Track module (controller, service, entities, DTOs, repositories)
+├── users/           # User module (controller, service, entities, DTOs, repositories)
+├── favorites/       # Favorites module (controller, service, entities, DTOs, repositories)
+├── common/          # Shared utilities (errors, filters, interceptors)
+├── app.module.ts    # Root module
+├── app.controller.ts
+├── app.service.ts
+└── main.ts          # Application entry point
 
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+test/
+├── auth/            # Authentication-related e2e tests (for future implementation)
+├── refresh/         # Token refresh e2e tests (for future implementation)
+├── utils/           # Test utilities
+├── lib/             # Test helpers
+└── *.e2e.spec.ts    # E2E test suites
+
+doc/
+└── api.yaml         # OpenAPI/Swagger specification
+```
+
+## Technology Stack
+
+- **Framework**: NestJS 10.x
+- **Language**: TypeScript 5.x
+- **Validation**: class-validator, class-transformer
+- **Documentation**: Swagger/OpenAPI (@nestjs/swagger)
+- **Testing**: Jest, Supertest
+
+## Data Storage
+
+Currently, the application uses **in-memory storage** (no database). All data is stored in memory and will be lost when the application restarts. This is suitable for development and testing purposes.
+
+## Error Handling
+
+The application includes global error handling with:
+- HTTP exception filters
+- Transform interceptors
+- Validation pipes for request validation
+
+## Development
+
+### Building the Project
+```bash
+npm run build
+```
+
+The compiled output will be in the `dist/` directory.
