@@ -11,7 +11,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { FavoritesService } from './favorites.service';
 import { FavoritesResponseDto } from './dto/favorites-response.dto';
 
-@ApiTags('favorites')
+@ApiTags('Favorites')
 @Controller('favs')
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
@@ -73,7 +73,7 @@ export class FavoritesController {
   })
   @ApiResponse({
     status: 404,
-    description: 'Artist is not favorite',
+    description: 'Artist not found in favorites',
   })
   async removeArtist(@Param('id') id: string): Promise<void> {
     return this.favoritesService.removeArtist(id);
@@ -125,7 +125,7 @@ export class FavoritesController {
   })
   @ApiResponse({
     status: 404,
-    description: 'Album is not favorite',
+    description: 'Album not found in favorites',
   })
   async removeAlbum(@Param('id') id: string): Promise<void> {
     return this.favoritesService.removeAlbum(id);
@@ -177,7 +177,7 @@ export class FavoritesController {
   })
   @ApiResponse({
     status: 404,
-    description: 'Track is not favorite',
+    description: 'Track not found in favorites',
   })
   async removeTrack(@Param('id') id: string): Promise<void> {
     return this.favoritesService.removeTrack(id);

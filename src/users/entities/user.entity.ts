@@ -7,7 +7,7 @@ export class User {
     example: '550e8400-e29b-41d4-a716-446655440000',
     format: 'uuid',
   })
-  id: string; // uuid v4
+  id: string;
 
   @ApiProperty({
     description: 'User login',
@@ -22,17 +22,17 @@ export class User {
     description: 'Version number, increments on update',
     example: 1,
   })
-  version: number; // integer number, increments on update
+  version: number;
 
   @ApiProperty({
     description: 'Timestamp of creation',
     example: 1655000000,
   })
-  createdAt: number; // timestamp of creation
+  createdAt: number;
 
   @ApiProperty({
     description: 'Timestamp of last update',
     example: 1655000000,
   })
-  updatedAt: number; // timestamp of last update
+  updatedAt: number;
 }

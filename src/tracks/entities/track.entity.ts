@@ -6,7 +6,7 @@ export class Track {
     example: '550e8400-e29b-41d4-a716-446655440000',
     format: 'uuid',
   })
-  id: string; // uuid v4
+  id: string;
 
   @ApiProperty({
     description: 'Track name',
@@ -20,7 +20,7 @@ export class Track {
     format: 'uuid',
     nullable: true,
   })
-  artistId: string | null; // refers to Artist
+  artistId: string | null;
 
   @ApiProperty({
     description: 'Album unique identifier',
@@ -28,11 +28,11 @@ export class Track {
     format: 'uuid',
     nullable: true,
   })
-  albumId: string | null; // refers to Album
+  albumId: string | null;
 
   @ApiProperty({
     description: 'Track duration in seconds',
     example: 262,
   })
-  duration: number; // integer number
+  duration: number;
 }

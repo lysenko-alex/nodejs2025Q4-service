@@ -9,6 +9,8 @@ import {
   ErrorCode,
   DomainException,
   convertDomainExceptionToHttp,
+  getErrorMessage,
+  EntityType,
 } from '../common/errors';
 import { ArtistsService } from '../artists/artists.service';
 import { AlbumsService } from '../albums/albums.service';
@@ -30,7 +32,6 @@ export class FavoritesService {
   async findAll(): Promise<FavoritesResponseDto> {
     const favorites = await this.favoritesRepository.findAll();
 
-    // Filter out deleted entities (they will throw NotFoundException)
     const artists = await Promise.allSettled(
       favorites.artists.map((id) => this.artistsService.findOne(id)),
     ).then((results) =>
@@ -64,11 +65,13 @@ export class FavoritesService {
 
   async addArtist(artistId: string): Promise<void> {
     if (!validate(artistId)) {
-      throw new BadRequestException(ErrorCode.INVALID_UUID);
+      throw new BadRequestException(
+        ErrorCode.INVALID_UUID,
+        getErrorMessage(ErrorCode.INVALID_UUID, EntityType.ARTIST, true),
+      );
     }
 
     try {
-      // Validate that artist exists
       await this.artistsService.findOne(artistId);
       await this.favoritesRepository.addArtist(artistId);
     } catch (error) {
@@ -76,7 +79,10 @@ export class FavoritesService {
         throw convertDomainExceptionToHttp(error);
       }
       if (error instanceof NotFoundException) {
-        throw new UnprocessableEntityException(ErrorCode.ENTITY_DOES_NOT_EXIST);
+        throw new UnprocessableEntityException(
+          ErrorCode.ENTITY_DOES_NOT_EXIST,
+          getErrorMessage(ErrorCode.ENTITY_DOES_NOT_EXIST, EntityType.ARTIST),
+        );
       }
       throw error;
     }
@@ -84,14 +90,28 @@ export class FavoritesService {
 
   async removeArtist(artistId: string): Promise<void> {
     if (!validate(artistId)) {
-      throw new BadRequestException(ErrorCode.INVALID_UUID);
+      throw new BadRequestException(
+        ErrorCode.INVALID_UUID,
+        getErrorMessage(ErrorCode.INVALID_UUID, EntityType.ARTIST, true),
+      );
     }
 
     try {
       await this.favoritesRepository.removeArtist(artistId);
     } catch (error) {
       if (error instanceof DomainException) {
-        throw convertDomainExceptionToHttp(error);
+        const httpException = convertDomainExceptionToHttp(error);
+        if (httpException.errorCode === ErrorCode.FAVORITE_NOT_FOUND) {
+          throw new NotFoundException(
+            ErrorCode.FAVORITE_NOT_FOUND,
+            getErrorMessage(
+              ErrorCode.FAVORITE_NOT_FOUND,
+              EntityType.ARTIST,
+              true,
+            ),
+          );
+        }
+        throw httpException;
       }
       throw error;
     }
@@ -99,11 +119,13 @@ export class FavoritesService {
 
   async addAlbum(albumId: string): Promise<void> {
     if (!validate(albumId)) {
-      throw new BadRequestException(ErrorCode.INVALID_UUID);
+      throw new BadRequestException(
+        ErrorCode.INVALID_UUID,
+        getErrorMessage(ErrorCode.INVALID_UUID, EntityType.ALBUM, true),
+      );
     }
 
     try {
-      // Validate that album exists
       await this.albumsService.findOne(albumId);
       await this.favoritesRepository.addAlbum(albumId);
     } catch (error) {
@@ -111,7 +133,10 @@ export class FavoritesService {
         throw convertDomainExceptionToHttp(error);
       }
       if (error instanceof NotFoundException) {
-        throw new UnprocessableEntityException(ErrorCode.ENTITY_DOES_NOT_EXIST);
+        throw new UnprocessableEntityException(
+          ErrorCode.ENTITY_DOES_NOT_EXIST,
+          getErrorMessage(ErrorCode.ENTITY_DOES_NOT_EXIST, EntityType.ALBUM),
+        );
       }
       throw error;
     }
@@ -119,14 +144,28 @@ export class FavoritesService {
 
   async removeAlbum(albumId: string): Promise<void> {
     if (!validate(albumId)) {
-      throw new BadRequestException(ErrorCode.INVALID_UUID);
+      throw new BadRequestException(
+        ErrorCode.INVALID_UUID,
+        getErrorMessage(ErrorCode.INVALID_UUID, EntityType.ALBUM, true),
+      );
     }
 
     try {
       await this.favoritesRepository.removeAlbum(albumId);
     } catch (error) {
       if (error instanceof DomainException) {
-        throw convertDomainExceptionToHttp(error);
+        const httpException = convertDomainExceptionToHttp(error);
+        if (httpException.errorCode === ErrorCode.FAVORITE_NOT_FOUND) {
+          throw new NotFoundException(
+            ErrorCode.FAVORITE_NOT_FOUND,
+            getErrorMessage(
+              ErrorCode.FAVORITE_NOT_FOUND,
+              EntityType.ALBUM,
+              true,
+            ),
+          );
+        }
+        throw httpException;
       }
       throw error;
     }
@@ -134,11 +173,13 @@ export class FavoritesService {
 
   async addTrack(trackId: string): Promise<void> {
     if (!validate(trackId)) {
-      throw new BadRequestException(ErrorCode.INVALID_UUID);
+      throw new BadRequestException(
+        ErrorCode.INVALID_UUID,
+        getErrorMessage(ErrorCode.INVALID_UUID, EntityType.TRACK, true),
+      );
     }
 
     try {
-      // Validate that track exists
       await this.tracksService.findOne(trackId);
       await this.favoritesRepository.addTrack(trackId);
     } catch (error) {
@@ -146,7 +187,10 @@ export class FavoritesService {
         throw convertDomainExceptionToHttp(error);
       }
       if (error instanceof NotFoundException) {
-        throw new UnprocessableEntityException(ErrorCode.ENTITY_DOES_NOT_EXIST);
+        throw new UnprocessableEntityException(
+          ErrorCode.ENTITY_DOES_NOT_EXIST,
+          getErrorMessage(ErrorCode.ENTITY_DOES_NOT_EXIST, EntityType.TRACK),
+        );
       }
       throw error;
     }
@@ -154,14 +198,28 @@ export class FavoritesService {
 
   async removeTrack(trackId: string): Promise<void> {
     if (!validate(trackId)) {
-      throw new BadRequestException(ErrorCode.INVALID_UUID);
+      throw new BadRequestException(
+        ErrorCode.INVALID_UUID,
+        getErrorMessage(ErrorCode.INVALID_UUID, EntityType.TRACK, true),
+      );
     }
 
     try {
       await this.favoritesRepository.removeTrack(trackId);
     } catch (error) {
       if (error instanceof DomainException) {
-        throw convertDomainExceptionToHttp(error);
+        const httpException = convertDomainExceptionToHttp(error);
+        if (httpException.errorCode === ErrorCode.FAVORITE_NOT_FOUND) {
+          throw new NotFoundException(
+            ErrorCode.FAVORITE_NOT_FOUND,
+            getErrorMessage(
+              ErrorCode.FAVORITE_NOT_FOUND,
+              EntityType.TRACK,
+              true,
+            ),
+          );
+        }
+        throw httpException;
       }
       throw error;
     }

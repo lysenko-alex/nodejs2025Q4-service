@@ -6,7 +6,7 @@ export class Album {
     example: '550e8400-e29b-41d4-a716-446655440000',
     format: 'uuid',
   })
-  id: string; // uuid v4
+  id: string;
 
   @ApiProperty({
     description: 'Album name',
@@ -26,5 +26,5 @@ export class Album {
     format: 'uuid',
     nullable: true,
   })
-  artistId: string | null; // refers to Artist
+  artistId: string | null;
 }

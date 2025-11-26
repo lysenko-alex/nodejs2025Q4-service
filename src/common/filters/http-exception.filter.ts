@@ -19,7 +19,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     let errorCode: string | undefined;
 
     if (exception instanceof AppException) {
-      // Use our custom exception format
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse() as {
         message?: string | string[];
@@ -28,7 +27,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message = exceptionResponse.message || message;
       errorCode = exceptionResponse.errorCode;
     } else if (exception instanceof HttpException) {
-      // Handle standard NestJS HttpException
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
       if (typeof exceptionResponse === 'string') {

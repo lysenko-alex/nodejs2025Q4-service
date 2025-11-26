@@ -9,7 +9,7 @@ export class UpdatePasswordDto {
   })
   @IsString()
   @IsNotEmpty()
-  oldPassword: string; // previous password
+  oldPassword: string;
 
   @ApiProperty({
     description: 'New password',
@@ -18,5 +18,5 @@ export class UpdatePasswordDto {
   })
   @IsString()
   @IsNotEmpty()
-  newPassword: string; // new password
+  newPassword: string;
 }

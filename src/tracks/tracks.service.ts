@@ -10,6 +10,8 @@ import {
   ErrorCode,
   DomainException,
   convertDomainExceptionToHttp,
+  getErrorMessage,
+  EntityType,
 } from '../common/errors';
 import { FavoritesService } from '../favorites/favorites.service';
 
@@ -28,7 +30,10 @@ export class TracksService {
 
   async findOne(id: string): Promise<Track> {
     if (!validate(id)) {
-      throw new BadRequestException(ErrorCode.INVALID_UUID);
+      throw new BadRequestException(
+        ErrorCode.INVALID_UUID,
+        getErrorMessage(ErrorCode.INVALID_UUID, EntityType.TRACK),
+      );
     }
 
     const track = await this.trackRepository.findOne(id);
@@ -45,7 +50,10 @@ export class TracksService {
 
   async update(id: string, updateTrackDto: UpdateTrackDto): Promise<Track> {
     if (!validate(id)) {
-      throw new BadRequestException(ErrorCode.INVALID_UUID);
+      throw new BadRequestException(
+        ErrorCode.INVALID_UUID,
+        getErrorMessage(ErrorCode.INVALID_UUID, EntityType.TRACK),
+      );
     }
 
     try {
@@ -60,11 +68,13 @@ export class TracksService {
 
   async delete(id: string): Promise<void> {
     if (!validate(id)) {
-      throw new BadRequestException(ErrorCode.INVALID_UUID);
+      throw new BadRequestException(
+        ErrorCode.INVALID_UUID,
+        getErrorMessage(ErrorCode.INVALID_UUID, EntityType.TRACK),
+      );
     }
 
     try {
-      // Remove from favorites
       await this.favoritesService.removeTrackFromFavorites(id);
 
       await this.trackRepository.delete(id);

@@ -8,9 +8,6 @@ import {
 import { DomainException } from './domain-exceptions';
 import { ErrorCode } from './error-codes';
 
-/**
- * Converts domain exceptions to appropriate HTTP exceptions
- */
 export function convertDomainExceptionToHttp(
   error: DomainException,
 ): AppException {
@@ -33,7 +30,6 @@ export function convertDomainExceptionToHttp(
       return new UnprocessableEntityException(error.errorCode);
 
     default:
-      // Fallback to NotFoundException for unknown domain errors
       return new NotFoundException(error.errorCode);
   }
 }

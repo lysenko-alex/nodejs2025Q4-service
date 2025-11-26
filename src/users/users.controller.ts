@@ -21,7 +21,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { User } from './entities/user.entity';
 
-@ApiTags('users')
+@ApiTags('Users')
 @Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

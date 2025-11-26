@@ -10,6 +10,8 @@ import {
   ErrorCode,
   DomainException,
   convertDomainExceptionToHttp,
+  getErrorMessage,
+  EntityType,
 } from '../common/errors';
 import { AlbumsService } from '../albums/albums.service';
 import { TracksService } from '../tracks/tracks.service';
@@ -34,7 +36,10 @@ export class ArtistsService {
 
   async findOne(id: string): Promise<Artist> {
     if (!validate(id)) {
-      throw new BadRequestException(ErrorCode.INVALID_UUID);
+      throw new BadRequestException(
+        ErrorCode.INVALID_UUID,
+        getErrorMessage(ErrorCode.INVALID_UUID, EntityType.ARTIST),
+      );
     }
 
     const artist = await this.artistRepository.findOne(id);
@@ -51,7 +56,10 @@ export class ArtistsService {
 
   async update(id: string, updateArtistDto: UpdateArtistDto): Promise<Artist> {
     if (!validate(id)) {
-      throw new BadRequestException(ErrorCode.INVALID_UUID);
+      throw new BadRequestException(
+        ErrorCode.INVALID_UUID,
+        getErrorMessage(ErrorCode.INVALID_UUID, EntityType.ARTIST),
+      );
     }
 
     try {
@@ -66,14 +74,15 @@ export class ArtistsService {
 
   async delete(id: string): Promise<void> {
     if (!validate(id)) {
-      throw new BadRequestException(ErrorCode.INVALID_UUID);
+      throw new BadRequestException(
+        ErrorCode.INVALID_UUID,
+        getErrorMessage(ErrorCode.INVALID_UUID, EntityType.ARTIST),
+      );
     }
 
     try {
-      // Nullify references in albums and tracks before deleting
       await this.albumsService.nullifyArtistReferences(id);
       await this.tracksService.nullifyArtistReferences(id);
-      // Remove from favorites
       await this.favoritesService.removeArtistFromFavorites(id);
 
       await this.artistRepository.delete(id);

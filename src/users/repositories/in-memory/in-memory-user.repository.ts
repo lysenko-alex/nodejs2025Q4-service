@@ -43,8 +43,6 @@ export class InMemoryUserRepository implements IUserRepository {
     }
 
     const user = this.users[userIndex];
-    // Note: Password validation is business logic, but we check it here
-    // for repository consistency. The service layer will handle the HTTP exception.
     if (user.password !== updatePasswordDto.oldPassword) {
       throw new RepositoryException(ErrorCode.WRONG_OLD_PASSWORD);
     }

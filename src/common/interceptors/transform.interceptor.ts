@@ -13,7 +13,6 @@ export class TransformInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       map((data) => {
-        // Use class-transformer to exclude fields marked with @Exclude()
         return instanceToPlain(data);
       }),
     );

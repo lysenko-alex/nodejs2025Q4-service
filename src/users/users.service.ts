@@ -11,6 +11,8 @@ import {
   ErrorCode,
   DomainException,
   convertDomainExceptionToHttp,
+  getErrorMessage,
+  EntityType,
 } from '../common/errors';
 
 @Injectable()
@@ -27,7 +29,10 @@ export class UsersService {
 
   async findOne(id: string): Promise<User> {
     if (!validate(id)) {
-      throw new BadRequestException(ErrorCode.INVALID_UUID);
+      throw new BadRequestException(
+        ErrorCode.INVALID_UUID,
+        getErrorMessage(ErrorCode.INVALID_UUID, EntityType.USER),
+      );
     }
 
     const user = await this.userRepository.findOne(id);
@@ -48,7 +53,10 @@ export class UsersService {
     updatePasswordDto: UpdatePasswordDto,
   ): Promise<User> {
     if (!validate(id)) {
-      throw new BadRequestException(ErrorCode.INVALID_UUID);
+      throw new BadRequestException(
+        ErrorCode.INVALID_UUID,
+        getErrorMessage(ErrorCode.INVALID_UUID, EntityType.USER),
+      );
     }
 
     try {
@@ -64,7 +72,10 @@ export class UsersService {
 
   async delete(id: string): Promise<void> {
     if (!validate(id)) {
-      throw new BadRequestException(ErrorCode.INVALID_UUID);
+      throw new BadRequestException(
+        ErrorCode.INVALID_UUID,
+        getErrorMessage(ErrorCode.INVALID_UUID, EntityType.USER),
+      );
     }
 
     try {
