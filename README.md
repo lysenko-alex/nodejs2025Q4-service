@@ -15,7 +15,7 @@ A RESTful API service for managing a home music library built with NestJS. This 
 
 ## Prerequisites
 
-- **Node.js** >= 22.14.0 - [Download & Install Node.js](https://nodejs.org/en/download/)
+- **Node.js** 23.6.1 - [Download & Install Node.js](https://nodejs.org/en/download/)
 - **npm** or **pnpm** package manager
 - **Git** - [Download & Install Git](https://git-scm.com/downloads)
 

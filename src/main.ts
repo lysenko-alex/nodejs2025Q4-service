@@ -4,9 +4,10 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
+import { checkNodeVersion } from './check-node-version';
 import * as dotenv from 'dotenv';
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import * as yaml from 'js-yaml';
 
 dotenv.config();
@@ -48,4 +49,5 @@ async function bootstrap() {
 
   await app.listen(port);
 }
+checkNodeVersion();
 bootstrap();
