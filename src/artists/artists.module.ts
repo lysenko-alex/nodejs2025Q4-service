@@ -1,7 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { ArtistsController } from './artists.controller';
 import { ArtistsService } from './artists.service';
-import { InMemoryArtistRepository } from './repositories/in-memory/in-memory-artist.repository';
+import { PrismaArtistRepository } from './repositories/prisma/prisma-artist.repository';
 import { AlbumsModule } from '../albums/albums.module';
 import { TracksModule } from '../tracks/tracks.module';
 import { FavoritesModule } from '../favorites/favorites.module';
@@ -17,7 +17,7 @@ import { FavoritesModule } from '../favorites/favorites.module';
     ArtistsService,
     {
       provide: 'IArtistRepository',
-      useClass: InMemoryArtistRepository,
+      useClass: PrismaArtistRepository,
     },
   ],
   exports: [ArtistsService],
