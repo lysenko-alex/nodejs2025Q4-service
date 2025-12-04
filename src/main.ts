@@ -13,7 +13,8 @@ import * as yaml from 'js-yaml';
 dotenv.config();
 
 const loadSwaggerDocument = () => {
-  const yamlPath = path.join(__dirname, '..', 'doc', 'api.yaml');
+  const yamlPath = path.join(process.cwd(), 'doc', 'api.yaml');
+
   try {
     const yamlContent = fs.readFileSync(yamlPath, 'utf8');
     return yaml.load(yamlContent) as any;
