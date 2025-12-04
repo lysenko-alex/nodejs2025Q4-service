@@ -1,7 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { AlbumsController } from './albums.controller';
 import { AlbumsService } from './albums.service';
-import { InMemoryAlbumRepository } from './repositories/in-memory/in-memory-album.repository';
+import { PrismaAlbumRepository } from './repositories/prisma/prisma-album.repository';
 import { TracksModule } from '../tracks/tracks.module';
 import { FavoritesModule } from '../favorites/favorites.module';
 
@@ -12,7 +12,7 @@ import { FavoritesModule } from '../favorites/favorites.module';
     AlbumsService,
     {
       provide: 'IAlbumRepository',
-      useClass: InMemoryAlbumRepository,
+      useClass: PrismaAlbumRepository,
     },
   ],
   exports: [AlbumsService],
