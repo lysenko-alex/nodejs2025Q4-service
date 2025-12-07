@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { InMemoryUserRepository } from './repositories/in-memory/in-memory-user.repository';
+import { PrismaUserRepository } from './repositories/prisma/prisma-user.repository';
 
 @Module({
   controllers: [UsersController],
@@ -9,7 +9,7 @@ import { InMemoryUserRepository } from './repositories/in-memory/in-memory-user.
     UsersService,
     {
       provide: 'IUserRepository',
-      useClass: InMemoryUserRepository,
+      useClass: PrismaUserRepository,
     },
   ],
 })

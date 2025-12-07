@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output = "./generated/prisma"
+  moduleFormat    = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  login     String   @unique
+  password  String
+  version   Int      @default(1)
+  createdAt BigInt
+  updatedAt BigInt
+
+  @@map("users")
+}
+
+model Artist {
+  id     String  @id @default(uuid())
+  name   String
+  grammy Boolean @default(false)
+
+  albums Album[]
+  tracks Track[]
+  favoriteArtists FavoriteArtist[]
+
+  @@map("artists")
+}
+
+model Album {
+  id       String   @id @default(uuid())
+  name     String
+  year     Int
+  artistId String?
+
+  artist Artist? @relation(fields: [artistId], references: [id], onDelete: SetNull)
+  tracks Track[]
+  favoriteAlbums FavoriteAlbum[]
+
+  @@map("albums")
+}
+
+model Track {
+  id       String   @id @default(uuid())
+  name     String
+  artistId String?
+  albumId  String?
+  duration Int
+
+  artist Artist? @relation(fields: [artistId], references: [id], onDelete: SetNull)
+  album  Album?  @relation(fields: [albumId], references: [id], onDelete: SetNull)
+  favoriteTracks FavoriteTrack[]
+
+  @@map("tracks")
+}
+
+model FavoriteArtist {
+  id       String @id @default(uuid())
+  artistId String @unique
+
+  artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  @@map("favorite_artists")
+}
+
+model FavoriteAlbum {
+  id      String @id @default(uuid())
+  albumId String @unique
+
+  album Album @relation(fields: [albumId], references: [id], onDelete: Cascade)
+
+  @@map("favorite_albums")
+}
+
+model FavoriteTrack {
+  id      String @id @default(uuid())
+  trackId String @unique
+
+  track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@map("favorite_tracks")
+}

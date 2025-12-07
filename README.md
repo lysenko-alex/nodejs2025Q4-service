@@ -15,9 +15,15 @@ A RESTful API service for managing a home music library built with NestJS. This 
 
 ## Prerequisites
 
+### For Local Development
 - **Node.js** >=23.6.1 <25.0.0 (supports Node.js 23.x and 24.x) - [Download & Install Node.js](https://nodejs.org/en/download/)
 - **npm** or **pnpm** package manager
 - **Git** - [Download & Install Git](https://git-scm.com/downloads)
+- **PostgreSQL** (optional, if running without Docker)
+
+### For Docker Deployment
+- **Docker** - [Download & Install Docker](https://docs.docker.com/get-docker/)
+- **Docker Compose** - [Install Docker Compose](https://docs.docker.com/compose/install/)
 
 > **Note**: The application includes a Node.js version check that will prevent startup if an incompatible version is detected. Make sure you're using a supported Node.js version.
 
@@ -36,36 +42,64 @@ npm install
 pnpm install
 ```
 
-## Configuration
-
-The application uses environment variables for configuration. Create a `.env` file in the root directory (optional, defaults are provided):
-
-```env
-PORT=4000
-BASE_URL=http://localhost:4000
-```
-
 ### Environment Variables
 
+**Application:**
 - `PORT` - Server port (default: 4000)
 - `BASE_URL` - Base URL for the API (default: http://localhost:4000)
 
+**Database:**
+- `DATABASE_URL` - PostgreSQL connection string (required for Prisma)
+- `POSTGRES_USER` - PostgreSQL username (default: postgres)
+- `POSTGRES_PASSWORD` - PostgreSQL password (default: postgres)
+- `POSTGRES_DB` - PostgreSQL database name (default: home_library)
+- `POSTGRES_PORT` - PostgreSQL port (default: 5432)
+
 ## Running the Application
 
-### Development Mode
+### Using Docker (Recommended)
+
+The easiest way to run the application is using Docker Compose, which sets up both the application and PostgreSQL database.
+
+ **Build and start containers:**
 ```bash
-npm run start:dev
+
+npm run start:container
+# or
+pnpm run start:container
 ```
 
-### Production Mode
+
+The application will be available at `http://localhost:4000` (or your configured port).
+
+**Note:** The application container is configured with hot reload, so changes to files in the `src` folder will automatically restart the application.
+
+### Local Development (Without Docker)
+
+1. **Start PostgreSQL database:**
+   - Install and start PostgreSQL locally, or
+   - Use Docker: `docker run -d --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:16-alpine`
+
+2. **Set up the database:**
 ```bash
-npm run build
-npm run start:prod
+# Generate Prisma Client
+npm prisma generate
+
+# Run migrations
+npm prisma migrate dev
 ```
 
-### Debug Mode
+3. **Start the application:**
 ```bash
-npm run start:debug
+# Development mode
+pnpm run start:dev
+
+# Production mode
+pnpm run build
+pnpm run start:prod
+
+# Debug mode
+pnpm run start:debug
 ```
 
 After starting the application, it will be available at `http://localhost:4000` (or your configured port).
@@ -183,11 +217,15 @@ src/
 ├── tracks/          # Track module (controller, service, entities, DTOs, repositories)
 ├── users/           # User module (controller, service, entities, DTOs, repositories)
 ├── favorites/       # Favorites module (controller, service, entities, DTOs, repositories)
+├── prisma/          # Prisma module and service
 ├── common/          # Shared utilities (errors, filters, interceptors)
 ├── app.module.ts    # Root module
 ├── app.controller.ts
 ├── app.service.ts
 └── main.ts          # Application entry point
+
+prisma/
+└── schema.prisma    # Prisma schema definition
 
 test/
 ├── auth/            # Authentication-related e2e tests (for future implementation)
@@ -204,13 +242,13 @@ doc/
 
 - **Framework**: NestJS 10.x
 - **Language**: TypeScript 5.x
+- **Database**: PostgreSQL 16
+- **ORM**: Prisma 7.x
 - **Validation**: class-validator, class-transformer
 - **Documentation**: Swagger/OpenAPI (@nestjs/swagger)
 - **Testing**: Jest, Supertest
+- **Containerization**: Docker, Docker Compose
 
-## Data Storage
-
-Currently, the application uses **in-memory storage** (no database). All data is stored in memory and will be lost when the application restarts. This is suitable for development and testing purposes.
 
 ## Error Handling
 
