@@ -27,14 +27,14 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.production
     container_name: home-library-app
     environment:
       PORT: ${PORT}
       BASE_URL: ${BASE_URL}
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
     ports:
-      - "${PORT}:4000"
+      - "${PORT}:${PORT}"
     volumes:
       - /app/node_modules
     networks:
@@ -43,15 +43,15 @@ services:
       postgres:
         condition: service_healthy
     restart: unless-stopped
-    command: npm run start:dev
-    develop: 
-      watch:
-        - action: sync
-          path: ./src
-          target: /app/src
-          ignore:
-            - node_modules/
-            - dist/
+    command: npm run start:prod
+    # develop: 
+    #   watch:
+    #     - action: sync
+    #       path: ./src
+    #       target: /app/src
+    #       ignore:
+    #         - node_modules/
+    #         - dist/
 
 networks:
   home-library-network:
