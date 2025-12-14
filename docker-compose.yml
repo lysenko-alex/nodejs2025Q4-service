@@ -27,12 +27,18 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile.production
-    container_name: home-library-app
+      dockerfile: Dockerfile.dev
+    container_name: home-library-app1
     environment:
       PORT: ${PORT}
       BASE_URL: ${BASE_URL}
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_SECRET_REFRESH_KEY: ${JWT_SECRET_REFRESH_KEY}
+      TOKEN_EXPIRE_TIME: ${TOKEN_EXPIRE_TIME}
+      TOKEN_REFRESH_EXPIRE_TIME: ${TOKEN_REFRESH_EXPIRE_TIME}
+      LOG_LEVEL: ${LOG_LEVEL}
+      LOG_FILE_SIZE_KB: ${LOG_FILE_SIZE_KB}
     ports:
       - "${PORT}:${PORT}"
     volumes:
@@ -43,15 +49,15 @@ services:
       postgres:
         condition: service_healthy
     restart: unless-stopped
-    command: npm run start:prod
-    # develop: 
-    #   watch:
-    #     - action: sync
-    #       path: ./src
-    #       target: /app/src
-    #       ignore:
-    #         - node_modules/
-    #         - dist/
+    command: npm run start:dev
+    develop: 
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+          ignore:
+            - node_modules/
+            - dist/
 
 networks:
   home-library-network:
