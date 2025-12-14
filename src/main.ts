@@ -4,6 +4,8 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { LoggingService } from './common/logging/logging.service';
 import { checkNodeVersion } from './check-node-version';
 import * as dotenv from 'dotenv';
 import * as fs from 'node:fs';
@@ -25,6 +27,7 @@ const loadSwaggerDocument = () => {
 };
 
 async function bootstrap() {
+  console.log('here is the port', process.env.PORT);
   const app = await NestFactory.create(AppModule);
 
   app.enableCors();
@@ -40,13 +43,35 @@ async function bootstrap() {
     swaggerDocument.servers = [{ url: baseUrl }];
   }
 
-  SwaggerModule.setup('docs', app, swaggerDocument);
+  SwaggerModule.setup('doc', app, swaggerDocument);
+
+  const loggingService = app.get(LoggingService);
+
+  process.on('uncaughtException', (error: Error) => {
+    loggingService.error(
+      `Uncaught Exception: ${error.message}\n${error.stack || ''}`,
+      'Process',
+    );
+    process.exit(1);
+  });
+
+  process.on('unhandledRejection', (reason: unknown) => {
+    const errorMessage =
+      reason instanceof Error
+        ? `${reason.message}\n${reason.stack || ''}`
+        : String(reason);
+    loggingService.error(`Unhandled Rejection: ${errorMessage}`, 'Process');
+    process.exit(1);
+  });
 
   app.useGlobalPipes(new ValidationPipe());
 
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter(loggingService));
 
-  app.useGlobalInterceptors(new TransformInterceptor());
+  app.useGlobalInterceptors(
+    new LoggingInterceptor(loggingService),
+    new TransformInterceptor(),
+  );
 
   await app.listen(port);
 }

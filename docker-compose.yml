@@ -27,8 +27,8 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile.production
-    container_name: home-library-app
+      dockerfile: Dockerfile.dev
+    container_name: home-library-app1
     environment:
       PORT: ${PORT}
       BASE_URL: ${BASE_URL}
@@ -43,15 +43,15 @@ services:
       postgres:
         condition: service_healthy
     restart: unless-stopped
-    command: npm run start:prod
-    # develop: 
-    #   watch:
-    #     - action: sync
-    #       path: ./src
-    #       target: /app/src
-    #       ignore:
-    #         - node_modules/
-    #         - dist/
+    command: npm run start:dev
+    develop: 
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+          ignore:
+            - node_modules/
+            - dist/
 
 networks:
   home-library-network:

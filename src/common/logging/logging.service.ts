@@ -15,9 +15,14 @@ export class LoggingService implements OnModuleDestroy {
   private readonly logLevel: LogLevel;
   private readonly fileSizeKB: number;
   private readonly logDir: string;
+
   private logFileStream: fs.WriteStream | null = null;
   private currentLogFile: string | null = null;
   private currentFileSize: number = 0;
+
+  private errorLogFileStream: fs.WriteStream | null = null;
+  private currentErrorLogFile: string | null = null;
+  private currentErrorFileSize: number = 0;
 
   constructor() {
     const logLevelEnv = process.env.LOG_LEVEL || '2';
@@ -25,7 +30,6 @@ export class LoggingService implements OnModuleDestroy {
     this.fileSizeKB = parseInt(process.env.LOG_FILE_SIZE_KB || '100', 10);
     this.logDir = path.join(process.cwd(), 'logs');
 
-    // Create logs directory if it doesn't exist
     if (!fs.existsSync(this.logDir)) {
       fs.mkdirSync(this.logDir, { recursive: true });
     }
@@ -33,11 +37,17 @@ export class LoggingService implements OnModuleDestroy {
 
   onModuleDestroy() {
     this.closeLogFile();
+    this.closeErrorLogFile();
   }
 
   private getLogFileName(): string {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     return path.join(this.logDir, `app-${timestamp}.log`);
+  }
+
+  private getErrorLogFileName(): string {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    return path.join(this.logDir, `error-${timestamp}.log`);
   }
 
   private rotateLogFile(): void {
@@ -49,10 +59,26 @@ export class LoggingService implements OnModuleDestroy {
     });
   }
 
+  private rotateErrorLogFile(): void {
+    this.closeErrorLogFile();
+    this.currentErrorLogFile = this.getErrorLogFileName();
+    this.currentErrorFileSize = 0;
+    this.errorLogFileStream = fs.createWriteStream(this.currentErrorLogFile, {
+      flags: 'a',
+    });
+  }
+
   private closeLogFile(): void {
     if (this.logFileStream) {
       this.logFileStream.end();
       this.logFileStream = null;
+    }
+  }
+
+  private closeErrorLogFile(): void {
+    if (this.errorLogFileStream) {
+      this.errorLogFileStream.end();
+      this.errorLogFileStream = null;
     }
   }
 
@@ -85,6 +111,20 @@ export class LoggingService implements OnModuleDestroy {
       if (this.logFileStream) {
         this.logFileStream.write(logMessage);
         this.currentFileSize += Buffer.byteLength(logMessage, 'utf8');
+      }
+
+      if (level === LogLevel.ERROR) {
+        if (
+          !this.errorLogFileStream ||
+          this.currentErrorFileSize >= this.fileSizeKB * 1024
+        ) {
+          this.rotateErrorLogFile();
+        }
+
+        if (this.errorLogFileStream) {
+          this.errorLogFileStream.write(logMessage);
+          this.currentErrorFileSize += Buffer.byteLength(logMessage, 'utf8');
+        }
       }
     }
   }

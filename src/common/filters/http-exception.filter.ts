@@ -5,14 +5,18 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { AppException } from '../errors/custom-exceptions';
+import { LoggingService } from '../logging/logging.service';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
+  constructor(private readonly loggingService: LoggingService) {}
+
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message: string | string[] = 'Internal server error';
@@ -39,6 +43,28 @@ export class HttpExceptionFilter implements ExceptionFilter {
       }
     }
 
+    const errorMessage = Array.isArray(message) ? message.join(', ') : message;
+    const errorDetails = {
+      statusCode: status,
+      message: errorMessage,
+      path: request.url,
+      method: request.method,
+      errorCode,
+      stack: exception instanceof Error ? exception.stack : undefined,
+    };
+
+    if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
+      this.loggingService.error(
+        `Error: ${JSON.stringify(errorDetails)}`,
+        'HttpExceptionFilter',
+      );
+    } else {
+      this.loggingService.warn(
+        `Error: ${JSON.stringify(errorDetails)}`,
+        'HttpExceptionFilter',
+      );
+    }
+
     const responseBody: {
       statusCode: number;
       message: string;
@@ -46,7 +72,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       errorCode?: string;
     } = {
       statusCode: status,
-      message: Array.isArray(message) ? message.join(', ') : message,
+      message: errorMessage,
     };
 
     if (errorCode) {
