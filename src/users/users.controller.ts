@@ -20,11 +20,15 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { User } from './entities/user.entity';
+import { LoggingService } from '../common/logging/logging.service';
 
 @ApiTags('Users')
 @Controller('user')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly loggingService: LoggingService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })
@@ -34,6 +38,7 @@ export class UsersController {
     type: [User],
   })
   async findAll(): Promise<User[]> {
+    this.loggingService.log('Finding all users');
     return this.usersService.findAll();
   }
 

@@ -15,7 +15,7 @@ export class User {
   })
   login: string;
 
-  @Exclude()
+  @Exclude({ toPlainOnly: true })
   password: string;
 
   @ApiProperty({

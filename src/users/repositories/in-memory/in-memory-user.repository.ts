@@ -19,6 +19,10 @@ export class InMemoryUserRepository implements IUserRepository {
     return this.users.find((user) => user.id === id) || null;
   }
 
+  async findByLogin(login: string): Promise<User | null> {
+    return this.users.find((user) => user.login === login) || null;
+  }
+
   async create(createUserDto: CreateUserDto): Promise<User> {
     const now = Date.now();
     const user: User = {
